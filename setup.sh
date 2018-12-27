@@ -2,6 +2,9 @@
 # Ugeek Raspi Media Player Setup
 FILE_CONFIG="/boot/config.txt"
 FILE_RCLOCAL="/etc/rc.local"
+FONT_URL="https://github.com/adobe-fonts/source-han-sans/raw/release/OTC/SourceHanSans-Bold.ttc"
+FONT_FILE="/etc/emulationstation/themes/carbon/art/SourceHanSans-Bold.ttc"
+FONT_SIZE="0.055"
 
 function check_requiments(){
 	echo "]Update System["
@@ -126,6 +129,26 @@ function enable_ui(){
 	fi
 	sed -i '/^exit 0/icd \/home\/pi\/touchboot;.\/starter.sh &' $FILE_RCLOCAL
 }
+function disable_CJK_font(){
+	if [ -e "/etc/emulationstation/themes/carbon/carbon.xml" ]; then
+		sed -i -e 's/SourceHanSans-Bold.ttc/Cabin-Bold.ttf/g' /etc/emulationstation/themes/carbon/carbon.xml
+	fi
+	if [ -e "/etc/emulationstation/themes/carbon/art/SourceHanSans-Bold.ttc" ]; then
+		rm $FONT_FILE
+	fi
+
+}
+function enable_CJK_font(){
+	if [ ! -e "resources/SourceHanSans-Bold.ttc" ]; then
+		curl -LJ0 -o resources/SourceHanSans-Bold.ttc $FONT_URL
+	fi
+	if [ ! -e "/etc/emulationstation/themes/carbon/art/SourceHanSans-Bold.ttc" ]; then
+		cp resources/SourceHanSans-Bold.ttc $FONT_FILE
+	fi
+	
+	echo ">Change font of emulationstatoin"
+	sed -i -e 's/Cabin-Bold.ttf/SourceHanSans-Bold.ttc/g' /etc/emulationstation/themes/carbon/carbon.xml
+}
 main(){
 	disable_screen
 	enable_screen
@@ -133,5 +156,7 @@ main(){
 	enable_keyboard
 	disable_ui
 	enable_ui
+	disable_CJK_font
+	enable_CJK_font
 }
 main
