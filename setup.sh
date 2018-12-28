@@ -5,16 +5,17 @@ FILE_RCLOCAL="/etc/rc.local"
 FONT_URL="https://github.com/adobe-fonts/source-han-sans/raw/release/OTC/SourceHanSans-Bold.ttc"
 FONT_FILE="/etc/emulationstation/themes/carbon/art/SourceHanSans-Bold.ttc"
 FONT_SIZE="0.055"
+SOFTWARE_LIST="python-dev python-pip python-smbus python-wxgtk3.0 matchbox-keyboard"
 
 function check_requiments(){
 	echo "]Update System["
-	SOFT=$(dpkg -l python-dev python-pip python-smbus | grep "<none>")
+	SOFT=$(dpkg -l $SOFTWARE_LIST | grep "<none>")
 	if [ -n "$SOFT" ]; then
 		apt update
-		apt -y install python-dev python-pip python-smbus
-		echo "python-dev python-pip python-smbus install complete."
+		apt -y install $SOFTWARE_LIST
+		echo "$SOFTWARE_LIST install complete."
 	else
-		echo "python-dev python-pip python-smbus already exists."
+		echo "$SOFTWARE_LIST already exists."
 	fi
 	SOFT=$(dpkg -l python-evdev | grep "matching")
 	if [ -n "$SOFT" ]; then
@@ -128,6 +129,33 @@ function enable_ui(){
 		cp -a touchboot /home/pi/
 	fi
 	sed -i '/^exit 0/icd \/home\/pi\/touchboot;.\/starter.sh &' $FILE_RCLOCAL
+	sudo cp PiSwitch/autostart.sh /opt/retropie/configs/all/autostart.sh
+	sudo cp -R PiSwitch/NewTouchBoot/ /opt/retropie/configs/all/NewTouchBoot
+	sudo cp -R PiSwitch/joymap/ /home/pi/joymap
+	sudo cp /home/pi/PiSwitch/config.txt /boot/config.txt
+	sudo cp /home/pi/PiSwitch/SwitchBerry.jpg /home/pi/RetroPie/splashscreens/SwitchBerry.jpg
+	sudo cp /home/pi/PiSwitch/cmdline.txt /boot/cmdline.txt
+	sudo cp /home/pi/PiSwitch/splashscreen.list /etc/splashscreen.list
+	sudo chmod 777 /home/pi/RetroPie/splashscreens/SwitchBerry.jpg
+	sudo chmod 777 /etc/splashscreen.list
+	sudo chmod 777 /boot/cmdline.txt
+	sudo chmod a+x /boot/cmdline.txt
+	sudo chmod 777 /home/pi/joymap/* && sudo chmod a+x /home/pi/joymap/*
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/checknum
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/retro.jpg
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/kodi.jpg
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/terminal.png
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/Debian.jpg
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/left.jpg
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/right.jpg
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/check.png
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/logfile.txt
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/starter.sh
+	sudo chmod a+x /opt/retropie/configs/all/NewTouchBoot/starter.sh
+	sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/pywx.py
+	sudo chmod a+x /opt/retropie/configs/all/NewTouchBoot/pywx.py
+	sudo chmod 777 /opt/retropie/configs/all/autostart.sh
+	sudo chmod a+x /opt/retropie/configs/all/autostart.sh
 }
 function disable_CJK_font(){
 	if [ -e "/etc/emulationstation/themes/carbon/carbon.xml" ]; then
